@@ -6,6 +6,7 @@
   "scripts": {
     "test": "buidler test",
     "coverage": "npx buidler coverage --network coverage",
+    "deploy": "buidler run --network",
     "lint": "yarn run lint:js && npm run lint:sol",
     "lint:fix": "yarn run lint:js:fix",
     "lint:js": "eslint .",
