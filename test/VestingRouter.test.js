@@ -44,8 +44,9 @@ describe('Vesting', function () {
             expect(bondToken.address).to.not.equal(0)
             expect(vestingRouter.address).to.not.equal(0)
         })
-        it('should have if no balance', async function () {
-            expect(vestingRouter.allocateVestingFunds()).to.be.revertedWith('Not enough balance.')
+        it('should do nothing if no funds', async function () {
+            await vestingRouter.allocateVestingFunds()
+            expect (await vestingRouter.lastAllocatedAddress()).to.be.equal(0)
         })
         it('should move balance to vesting contracts', async function () {
             await bondToken.mint(vestingRouter.address, distributedAmount)
@@ -53,6 +54,36 @@ describe('Vesting', function () {
             expect(await bondToken.balanceOf(vestingA.address)).to.be.equal(amountVestingA)
             expect(await bondToken.balanceOf(vestingB.address)).to.be.equal(amountVestingB)
             expect(await bondToken.balanceOf(vestingC.address)).to.be.equal(amountVestingC)
+        })
+        it('should do partial distribute', async function () {
+            await bondToken.mint(vestingRouter.address, distributedAmount.sub(amountVestingC))
+            await vestingRouter.allocateVestingFunds()
+            expect(await bondToken.balanceOf(vestingA.address)).to.be.equal(amountVestingA)
+            expect(await bondToken.balanceOf(vestingB.address)).to.be.equal(amountVestingB)
+            expect(await vestingRouter.lastAllocatedAddress()).to.be.equal(2)
+            expect(await bondToken.balanceOf(vestingC.address)).to.be.equal(0)
+            await bondToken.mint(vestingRouter.address, amountVestingC)
+            await vestingRouter.allocateVestingFunds()
+            expect(await bondToken.balanceOf(vestingC.address)).to.be.equal(amountVestingC)
+            expect(await vestingRouter.lastAllocatedAddress()).to.be.equal(3)
+        })
+
+        it('should do partial distribute based on gas', async function () {
+            await bondToken.mint(vestingRouter.address, distributedAmount)
+            let tx = await vestingRouter.populateTransaction.allocateVestingFunds()
+            let txRaw = {
+                from: await owner.getAddress(),
+                to: vestingRouter.address,
+                value: 0,
+                data: tx.data
+            }
+            let estimatedGas = await ethers.provider.estimateGas(txRaw)
+            let manualGas = estimatedGas.sub(ethers.BigNumber.from(20000))
+
+            await vestingRouter.allocateVestingFunds({gasLimit: manualGas})
+            expect(await vestingRouter.lastAllocatedAddress()).to.be.equal(2)
+            await vestingRouter.allocateVestingFunds({gasLimit: manualGas})
+            expect(await vestingRouter.lastAllocatedAddress()).to.be.equal(3)
         })
     })
 })

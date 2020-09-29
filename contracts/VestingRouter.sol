@@ -10,7 +10,7 @@ contract VestingRouter {
 
     address[] private _vestingAddress;
     uint[] private _vestingAmount;
-    uint lastAllocatedAddress;
+    uint public lastAllocatedAddress;
     IERC20 private _bond;
 
     constructor (address[] memory vestingAddresses, uint[] memory vestingAmount, address bondToken) public {
@@ -21,9 +21,11 @@ contract VestingRouter {
 
     function allocateVestingFunds () public {
         for (uint i = lastAllocatedAddress; i < _vestingAddress.length; i++) {
-            require (_bond.balanceOf(address(this)) >= _vestingAmount[i], "Not enough balance.");
-            _bond.transfer(_vestingAddress[i], _vestingAmount[i]);
+            if (_bond.balanceOf(address(this)) < _vestingAmount[i] || gasleft() < 20000) {
+                break;
+            }
             lastAllocatedAddress++;
+            _bond.transfer(_vestingAddress[i], _vestingAmount[i]);
         }
     }
 
