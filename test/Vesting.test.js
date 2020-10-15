@@ -50,8 +50,8 @@ describe('Vesting', function () {
         it('should have totalDistributedBalance 0', async function () {
             expect(await vesting.totalDistributedBalance()).to.be.equal(distributedAmount)
         })
-        it('should have claim function callable only by owner', async function () {
-            expect(vesting.connect(owner).claim()).to.be.revertedWith('Ownable: caller is not the owner')
+        it('should have claim function callable by anyone', async function () {
+            await expect(vesting.connect(owner).claim()).to.not.be.revertedWith('Ownable: caller is not the owner')
         })
         it('should have the epoch1', async function () {
             await moveAtEpoch(1)
