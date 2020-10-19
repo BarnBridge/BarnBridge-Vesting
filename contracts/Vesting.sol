@@ -25,7 +25,7 @@ contract Vesting is Ownable, ReentrancyGuard {
         totalDistributedBalance = totalBalance;
     }
 
-    function claim () public onlyOwner nonReentrant {
+    function claim () public nonReentrant {
         uint balance;
         uint currentEpoch = getCurrentEpoch();
         if (currentEpoch > NUMBER_OF_EPOCHS + 1) {

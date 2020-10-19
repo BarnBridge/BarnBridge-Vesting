@@ -50,8 +50,8 @@ describe('Vesting', function () {
         it('should have totalDistributedBalance 0', async function () {
             expect(await vesting.totalDistributedBalance()).to.be.equal(distributedAmount)
         })
-        it('should have claim function callable only by owner', async function () {
-            expect(vesting.connect(owner).claim()).to.be.revertedWith('Ownable: caller is not the owner')
+        it('should have claim function callable by anyone', async function () {
+            await expect(vesting.connect(owner).claim()).to.not.be.revertedWith('Ownable: caller is not the owner')
         })
         it('should have the epoch1', async function () {
             await moveAtEpoch(1)
@@ -84,6 +84,26 @@ describe('Vesting', function () {
             expect(await bondToken.balanceOf(userAddr)).to.be.equal((distributedAmount.div(100)).mul(2))
             expect(await vesting.balance()).to.be.equal(distributedAmount.sub(distributedAmount.div(100).mul(2)))
             expect(await vesting.lastClaimedEpoch()).to.be.equal(2)
+        })
+        it('should mint with any user calling claim', async function () {
+            await bondToken.mint(vesting.address, distributedAmount) // set tokens
+            await moveAtEpoch(3)
+            await vesting.connect(owner).claim()
+            expect(await bondToken.balanceOf(owner.getAddress())).to.be.equal(0)
+            expect(await bondToken.balanceOf(userAddr)).to.be.equal((distributedAmount.div(100)).mul(2))
+            expect(await vesting.balance()).to.be.equal(distributedAmount.sub(distributedAmount.div(100).mul(2)))
+            expect(await vesting.lastClaimedEpoch()).to.be.equal(2)
+        })
+        it('should mint with any user sending 0 ETH', async function () {
+            await bondToken.mint(vesting.address, distributedAmount) // set tokens
+            await moveAtEpoch(6)
+            await owner.sendTransaction({
+                to: vesting.address,
+            })
+            expect(await bondToken.balanceOf(owner.getAddress())).to.be.equal(0)
+            expect(await bondToken.balanceOf(userAddr)).to.be.equal((distributedAmount.div(100)).mul(5))
+            expect(await vesting.balance()).to.be.equal(distributedAmount.sub(distributedAmount.div(100).mul(5)))
+            expect(await vesting.lastClaimedEpoch()).to.be.equal(5)
         })
         it('should mint for 100 week', async function () {
             await bondToken.mint(vesting.address, distributedAmount.add(1)) // set tokens
