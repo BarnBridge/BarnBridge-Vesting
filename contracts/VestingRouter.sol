@@ -8,8 +8,8 @@ import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 contract VestingRouter {
 
-    address[] private _vestingAddress;
-    uint[] private _vestingAmount;
+    address[] public _vestingAddress;
+    uint[] public _vestingAmount;
     uint public lastAllocatedAddress;
     IERC20 private _bond;
 
