@@ -1,0 +1,44 @@
+// this file is used to supply the constructor arguments to the verify function, for example:
+// ❯ npx buidler verify --constructor-args arguments.js --network rinkeby 0xc31a176D71a16C786539ffAfD33A38F6BAa0000E
+// todo: fill in the first element with the list of addresses from the deploy.js output
+// todo: fill the second element with the list of amounts from the deploy.js output
+// todo: fill last parameter with bond address
+module.exports = [
+    [
+        '0x85678bee5664663546769a35c25C503e4925f83C',
+        '0x3b420E79c5889793F0654C2bf0bEfF4dA8Fb4fFf',
+        '0xd00bFB3b673176A9B4b7113C7399FBea23446915',
+        '0x228bc46Bc8ceAE7e85B0D3286be8810FDCDC86Fd',
+        '0x74b6f94aD51ba0A48b6e9d705C7798Df500cE136',
+        '0xB65475b7Ae0cBD7788f89A4738b569A6D3938CF4',
+        '0xC1CCc2478B266035a861EA1B0FA61767DA56Eca7',
+        '0x6F98578F0e7b1Bdb3C1FfF25Ad739Bd32D143c40',
+        '0xdB07db33c4Af6030EddaE8D2bb1981fce1635671',
+        '0xA1ef51C22B1b5669313da8102006DD2CEb3E0981',
+        '0xB9a724Aa59b490dA2F757Cb039668Bc855A1192e',
+        '0x217e90aDEB4F915B83e338805724FF5276854e0e',
+        '0x3515eB9448cf202372A24D18d6540A3294e2063C',
+        '0xcd0e4A81C2C1edc4d67924Af5b417b835F74e9EF',
+        '0xC625BD09107dB857BEf2Fc0548803f88A14A8785',
+        '0x50C28ea6AD8A511228c9aa91983bC2863190e6e6',
+    ],
+    [
+        '225000000000000000000000',
+        '187500000000000000000000',
+        '75000000000000000000000',
+        '75000000000000000000000',
+        '37500000000000000000000',
+        '37500000000000000000000',
+        '37500000000000000000000',
+        '18750000000000000000000',
+        '18750000000000000000000',
+        '18750000000000000000000',
+        '18750000000000000000000',
+        '650000000000000000000000',
+        '300000000000000000000000',
+        '300000000000000000000000',
+        '100000000000000000000000',
+        '100000000000000000000000',
+    ],
+    '0x64496f51779e400C5E955228E56fA41563Fb4dd8',
+]
