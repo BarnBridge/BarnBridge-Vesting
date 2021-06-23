@@ -25,12 +25,16 @@ contract Vesting is Ownable, ReentrancyGuard {
         totalDistributedBalance = totalBalance;
     }
 
-    function claim () public nonReentrant {
+    function claim () public virtual nonReentrant {
+        claimInternal(owner());
+    }
+
+    function claimInternal (address to) internal {
         uint balance;
         uint currentEpoch = getCurrentEpoch();
         if (currentEpoch > NUMBER_OF_EPOCHS + 1) {
             lastClaimedEpoch = NUMBER_OF_EPOCHS;
-            _bond.transfer(owner(), _bond.balanceOf(address (this)));
+            _bond.transfer(to, _bond.balanceOf(address (this)));
             return;
         }
 
@@ -39,7 +43,7 @@ contract Vesting is Ownable, ReentrancyGuard {
         }
         lastClaimedEpoch = currentEpoch - 1;
         if (balance > 0) {
-            _bond.transfer(owner(), balance);
+            _bond.transfer(to, balance);
         }
     }
 
